@@ -11,7 +11,7 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
     private static ConfigurationsModule configurationsModule;
     private GlobalConfigurationFile globalConfigurationFile;
     private HubConfigurationFile hubConfigurationFile;
-    private GameConfigurationFile gameConfigurationFile;
+    //private GameConfigurationFile gameConfigurationFile;
 
     public ConfigurationsModule(AniCloudBedWars aniCloudBedWars){
         this.aniCloudBedWars = aniCloudBedWars;
@@ -35,17 +35,17 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
         return hubConfigurationFile;
     }
 
-    public GameConfigurationFile getGameConfigurationFile() {
+  /*  public GameConfigurationFile getGameConfigurationFile() {
         return gameConfigurationFile;
     }
-
+*/
 
     @Override
     public void onLoad() {
         getAniCloudBedWars().info("Loading '" + getModuleName() + "' module...");
         this.globalConfigurationFile = new GlobalConfigurationFile(getAniCloudBedWars());
         this.hubConfigurationFile = new HubConfigurationFile(getAniCloudBedWars());
-        this.gameConfigurationFile = new GameConfigurationFile(getAniCloudBedWars());
+        //this.gameConfigurationFile = new GameConfigurationFile(getAniCloudBedWars());
         getAniCloudBedWars().info("Successfully loaded '" + getModuleName() +"' module.");
     }
 
@@ -62,7 +62,7 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
         }
         if (globalConfigurationFile.getWorkType().equals(WorkType.GAME)){
             getAniCloudBedWars().info("Initializing variables for WorkType 'GAME'...");
-            getAniCloudBedWars().setInGamePrefix(getGameConfigurationFile().getGamePrefix());
+        //    getAniCloudBedWars().setInGamePrefix(getGameConfigurationFile().getGamePrefix());
         }
     }
 

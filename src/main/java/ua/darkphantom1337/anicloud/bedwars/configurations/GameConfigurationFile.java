@@ -4,13 +4,14 @@ import org.bukkit.plugin.Plugin;
 
 public class GameConfigurationFile extends DarkYAMLFileAPI {
 
-    public GameConfigurationFile(Plugin plugin) {
-        super(plugin, "gameConfiguration", plugin.getDataFolder());
+    public GameConfigurationFile(Plugin plugin, String gameID) {
+        super(plugin, "game_" + gameID, plugin.getDataFolder() + "/" + "Games");
     }
 
     @Override
     public void firstFill() {
-        getFileConfiguration().set(getPlugin().getName(), "Filename: " + getFileName() + " || Author: DarkPhantom1337");
+        getFileConfiguration().set(getPlugin().getName(), "GameName: " + getFileName().split("_")[1] + " || Author: DarkPhantom1337");
+        setString("GamePrefix", "[§a§lAniCloudBedWars-GAME]");
         setString("GamePrefix", "[§a§lAniCloudBedWars-GAME]");
         saveFileConfiguration();
     }

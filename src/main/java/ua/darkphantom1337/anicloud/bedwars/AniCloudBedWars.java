@@ -5,8 +5,11 @@ import ua.darkphantom1337.anicloud.bedwars.configurations.ConfigurationsModule;
 import ua.darkphantom1337.anicloud.bedwars.controllers.GameController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.HubController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.ModuleController;
+import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsSessionID;
 import ua.darkphantom1337.anicloud.bedwars.enums.ModuleNames;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkStatus;
+import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
+import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsGame;
 import ua.darkphantom1337.anicloud.bedwars.messages.HubMessageModule;
 
 public class AniCloudBedWars extends JavaPlugin {
@@ -18,7 +21,9 @@ public class AniCloudBedWars extends JavaPlugin {
     private String consolePrefix = "[AniCloudBedWars]";
     private String InGamePrefix = "§c[AniCloudBedWarsNotLoad]";
     private String HubPrefix = "§c[AniCloudBedWarsNotLoad]";
+    private WorkType workType = WorkType.UNSPECIFIED;
     private WorkStatus workStatus = WorkStatus.DISABLED;
+    private AniCloudBedWarsGame currentBedWarsGame;
 
     /**
      * CONTROLLERS
@@ -35,7 +40,11 @@ public class AniCloudBedWars extends JavaPlugin {
     private ConfigurationsModule configurationsModule;
     private HubMessageModule hubMessageModule;
 
-    private static AniCloudBedWars getInstance(){
+    public static AniCloudBedWars getInstance() {
+        return aniCloudBedWars;
+    }
+
+    public static AniCloudBedWars inst() {
         return aniCloudBedWars;
     }
 
@@ -118,5 +127,21 @@ public class AniCloudBedWars extends JavaPlugin {
 
     public void setWorkStatus(WorkStatus workStatus) {
         this.workStatus = workStatus;
+    }
+
+    public WorkType getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(WorkType workType) {
+        this.workType = workType;
+    }
+
+    public String getCurrentGameSessionID() {
+        return AniCloudBedWarsSessionID.get();
+    }
+
+    public AniCloudBedWarsGame getCurrentBedWarsGame() {
+        return currentBedWarsGame;
     }
 }

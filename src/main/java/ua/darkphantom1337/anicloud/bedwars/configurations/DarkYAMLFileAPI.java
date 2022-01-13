@@ -25,8 +25,8 @@ public class DarkYAMLFileAPI {
     private String author;
     private File dataFolder;
     private String ID;
-    private char[] symbolsForID = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toLowerCase() + "0123456789").toCharArray();
-    private Random random = new SecureRandom();
+    private static char[] symbolsForID = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toLowerCase() + "0123456789").toCharArray();
+    private static Random random = new SecureRandom();
     private LinkedList<String> allKeys = new LinkedList<String>();
 
     private static List<String> allFilesID = new ArrayList<String>();
@@ -92,6 +92,13 @@ public class DarkYAMLFileAPI {
     private String generateID() {
         String id = "";
         for (int i = 0; i <= 8; i++)
+            id += symbolsForID[random.nextInt(symbolsForID.length)];
+        return id;
+    }
+
+    public static String getRandomID(int length){
+        String id = "";
+        for (int i = 0; i <= length; i++)
             id += symbolsForID[random.nextInt(symbolsForID.length)];
         return id;
     }

@@ -19,6 +19,7 @@ public class ModuleController {
         getAniCloudBedWars().info("Loading 'ModuleController' ...");
         moduleController = this;
         initializeAllModules();
+
     }
 
     public AniCloudBedWars getAniCloudBedWars() {
