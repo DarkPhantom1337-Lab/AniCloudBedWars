@@ -20,6 +20,8 @@ public interface AniCloudBedWarsGame {
 
     String getArenaDescription();
 
+    String getWorldName();
+
     Location getArenaWaitSpawnLoc();
 
     List<String> getBuilderNames();

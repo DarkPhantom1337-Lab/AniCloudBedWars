@@ -2,6 +2,7 @@ package ua.darkphantom1337.anicloud.bedwars;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import ua.darkphantom1337.anicloud.bedwars.configurations.ConfigurationsModule;
+import ua.darkphantom1337.anicloud.bedwars.configurations.GameConfigurationFile;
 import ua.darkphantom1337.anicloud.bedwars.controllers.GameController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.HubController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.ModuleController;
@@ -11,6 +12,8 @@ import ua.darkphantom1337.anicloud.bedwars.enums.WorkStatus;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
 import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsGame;
 import ua.darkphantom1337.anicloud.bedwars.messages.HubMessageModule;
+
+import java.util.List;
 
 public class AniCloudBedWars extends JavaPlugin {
 
@@ -143,5 +146,13 @@ public class AniCloudBedWars extends JavaPlugin {
 
     public AniCloudBedWarsGame getCurrentBedWarsGame() {
         return currentBedWarsGame;
+    }
+
+    public List<String> getGamesID() {
+        return getConfigurationsModule().getGlobalConfigurationFile().getGamesID();
+    }
+
+    public GameConfigurationFile getGameData(String gameID) {
+        return new GameConfigurationFile(this, gameID);
     }
 }
