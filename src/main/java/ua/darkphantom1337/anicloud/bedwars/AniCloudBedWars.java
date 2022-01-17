@@ -26,7 +26,6 @@ public class AniCloudBedWars extends JavaPlugin {
     private String HubPrefix = "§c[AniCloudBedWarsNotLoad]";
     private WorkType workType = WorkType.UNSPECIFIED;
     private WorkStatus workStatus = WorkStatus.DISABLED;
-    private AniCloudBedWarsGame currentBedWarsGame;
 
     /**
      * CONTROLLERS
@@ -83,6 +82,23 @@ public class AniCloudBedWars extends JavaPlugin {
         info("Enabling AniCloudBedWars plugin, please wait. by DarkPhantom1337, 2022.");
         setWorkStatus(WorkStatus.ENABLING);
         getModuleController().enableAllModules();
+        if (workType.equals(WorkType.HUB)){
+            info("Plugin work type: HUB. Creating and configuring games on this server is not possible.");
+            hubController = new HubController(inst());
+        }
+        if (workType.equals(WorkType.GAME)){
+            info("Plugin work type: GAME. It is not possible to create and configure a hub on this server.");
+            gameController = new GameController(inst());
+            if (getGameController().isEnabled()){
+                info("GameController successfully enabled.");
+            } else {
+                error("GameController not enabled. Error printed...");
+            }
+        }
+        if (workType.equals(WorkType.UNSPECIFIED)){
+            error("Plugin work type: UNSPECIFIED. /acbw global changeworktype <TYPE> to change. " +
+                    "\nAvailable types: HUB, GAME.");
+        }
     }
 
     public void onDisable() {
@@ -140,14 +156,6 @@ public class AniCloudBedWars extends JavaPlugin {
         this.workType = workType;
     }
 
-    public String getCurrentGameSessionID() {
-        return AniCloudBedWarsSessionID.get();
-    }
-
-    public AniCloudBedWarsGame getCurrentBedWarsGame() {
-        return currentBedWarsGame;
-    }
-
     public List<String> getGamesID() {
         return getConfigurationsModule().getGlobalConfigurationFile().getGamesID();
     }
@@ -155,4 +163,6 @@ public class AniCloudBedWars extends JavaPlugin {
     public GameConfigurationFile getGameData(String gameID) {
         return new GameConfigurationFile(this, gameID);
     }
+
+
 }

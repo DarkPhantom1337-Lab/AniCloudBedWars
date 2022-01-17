@@ -3,10 +3,7 @@ package ua.darkphantom1337.anicloud.bedwars.interfaces;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
-import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsGameStatus;
-import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsResource;
-import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsTeamColor;
-import ua.darkphantom1337.anicloud.bedwars.enums.GameType;
+import ua.darkphantom1337.anicloud.bedwars.enums.*;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,6 +28,8 @@ public interface AniCloudBedWarsGame {
     Integer getSurvivingTeamAmount();
 
     Integer getTeamSize();
+
+    Integer getMinPlayers();
 
     Integer getMaxPlayers();
 
@@ -80,16 +79,15 @@ public interface AniCloudBedWarsGame {
 
     String getServerName();
 
-    Boolean joinToGame(Player player);
+    OperationResult joinToGame(Player player);
 
-    Boolean quitGame(Player player);
+    OperationResult quitGame(Player player);
 
     Boolean kickOutOfTheGame(Player player, String cause);
 
     Boolean hidePlayer(Player player);
 
     Integer getAllPlayersAmount();
-
 
     void setEnabled(Boolean enabled);
 

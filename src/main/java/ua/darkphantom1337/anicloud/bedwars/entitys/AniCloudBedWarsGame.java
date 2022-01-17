@@ -4,9 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
 import ua.darkphantom1337.anicloud.bedwars.configurations.GameConfigurationFile;
 import ua.darkphantom1337.anicloud.bedwars.enums.*;
+import ua.darkphantom1337.anicloud.bedwars.messages.GameMessageModule;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,25 +19,27 @@ import java.util.stream.Collectors;
 public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsGame {
 
     static String gameID, arenaName, arenaDescription, worldName, serverName, winnerName;
-    static Integer teamAmount, teamSize, maxPlayers, survivingPlayersAmount,
+    static Integer teamAmount, teamSize, minPlayers, maxPlayers, survivingPlayersAmount,
             survivingTeamAmount,
             maxInGameTime, timeToDeathMatch, deathMatchFloorY, deathMatchCeilingY,
-            arenaSize, allPlayersAmount, timeToStartGameMin, timeToStartGameMax;
+            arenaSize, allPlayersAmount, timeToStartGameMin, timeToStartGameMax, timeToEndGame, timeToStartGame;
     static Location arenaWaitSpawnLoc, playerInGameSpawnLoc, arenaCenter;
     static Date startedGameDate, startedDeathMatchDate, endGameDate;
     static AniCloudBedWarsGameStatus gameStatus = AniCloudBedWarsGameStatus.DISABLED;
     static List<String> buildersNames;
     static List<AniCloudBedWarsResource> availableResources;
     static List<Player> allPlayersInGame, survivingPlayersInGame;
+    static Boolean isInitializeStartMin, isInitializeStartMax, isInitializeDeathMatchStart, isInitializeEndGame;
 
     public AniCloudBedWarsGame(String gameID) {
         if (!AniCloudBedWars.inst().getWorkType().equals(WorkType.GAME)) {
             AniCloudBedWars.inst().error("Game '" + gameID + "' cannot be started because the plugin works in mode " + AniCloudBedWars.inst().getWorkType().name());
             return;
         }
-        AniCloudBedWarsGame currentGame = (AniCloudBedWarsGame) AniCloudBedWars.inst().getCurrentBedWarsGame();
+        AniCloudBedWarsGame currentGame = (AniCloudBedWarsGame) AniCloudBedWars.inst().getGameController().getCurrentBedWarsGame();
         if (currentGame == null || currentGame.getGameStatus().equals(AniCloudBedWarsGameStatus.DISABLED)) {
             setGameStatus(AniCloudBedWarsGameStatus.LOADING);
+            new AniCloudBedWarsSessionID("AniCloudBedWars/DarkPhantom1337");
             /**
              * LOADING GAME DATA
              */
@@ -54,13 +58,16 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
                         .map(p -> (Player) p)
                         .collect(Collectors.toList())
                         .forEach(p -> p.kickPlayer("§cИзвините, для создания новой игры Вы должны выйти. " +
-                        "\nПодождите пару минут," +
-                        "\n мы создаём для Вас новую игру"));
+                                "\nПодождите пару минут," +
+                                "\n мы создаём для Вас новую игру"));
                 setServerName(AniCloudBedWars.inst().getConfigurationsModule().getGlobalConfigurationFile().getString("ServerName"));
                 setTeamAmount(gameData.getGameIValue("TeamAmount"));
                 setTeamSize(gameData.getGameIValue("TeamSize"));
                 setSurvivingPlayersAmount(0);
                 setMaxInGameTime(gameData.getGameIValue("MaxInGameTime"));
+                timeToEndGame = maxInGameTime;
+                timeToStartGame = timeToStartGameMin;
+                setMinPlayers(gameData.getGameIValue("MinPlayers"));
                 setTimeToDeathMatch(gameData.getGameIValue("TimeToDeathMatch"));
                 setDeathMatchFloorY(gameData.getGameIValue("DeathMatchFloorY"));
                 setDeathMatchCeilingY(gameData.getGameIValue("DeathMatchCeilingY"));
@@ -82,7 +89,6 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
                 AniCloudBedWars.inst().info("Loading MAP for the '" + gameID + "' game...");
                 getArenaWaitSpawnLoc().getWorld().loadChunk(arenaWaitSpawnLoc.getChunk());
                 getArenaCenter().getWorld().loadChunk(arenaCenter.getChunk());
-
             } else {
                 AniCloudBedWars.inst().error("Error on load '" + gameID + "' game.Game not configured or created.");
                 return;
@@ -134,6 +140,12 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
     public Integer getTeamSize() {
         return teamSize;
     }
+
+    @Override
+    public Integer getMinPlayers() {
+        return minPlayers;
+    }
+
 
     @Override
     public Integer getMaxPlayers() {
@@ -256,41 +268,80 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
     }
 
     @Override
-    public Boolean joinToGame(Player player) {
+    public OperationResult joinToGame(Player player) {
         /**
          * handle player join
          */
         if (player == null) {
             AniCloudBedWars.inst().error("Player not identified.");
-            return false;
+            return OperationResult.UNSUCCESSFUL;
         }
         if (allPlayersAmount < maxPlayers) {
-
-            // send msg for join
-            //JOIN - ALLOW
-            return true;
+            allPlayersAmount++;
+            player.teleport(getArenaWaitSpawnLoc());
+            String joinMessage = GameMessageModule.getGameJoinMessage(player.getName(), maxPlayers - allPlayersAmount);
+            getAllPlayersInGame().forEach(gamePlayer -> gamePlayer.sendMessage(joinMessage));
+            getAllPlayersInGame().add(player);
+            player.sendMessage(GameMessageModule.getGamePlayerJoinMessage(player.getName(), maxPlayers - allPlayersAmount));
+            if (giveWaitStartGameItems(player).equals(OperationResult.SUCCESSFULLY)) {
+                updatePlayersAmount();
+                return OperationResult.SUCCESSFULLY;
+            } else {
+                AniCloudBedWars.inst().error("GameWaitItems not give for player " + player.getName() + ". Error printed...");
+                return OperationResult.PERFORMANCE_ERROR;
+            }
         }
-        // JOIN - DENY
-        return false;
+        return OperationResult.UNSUCCESSFUL;
+    }
+
+    public void updatePlayersAmount() {
+        if (allPlayersAmount == getMaxPlayers()) {
+            if (isInitializeStartMin && !isInitializeStartMax) {
+                initializeGameStartMax();
+                return;
+            }
+        }
+        if (allPlayersAmount >= getMinPlayers()) {
+            if (!isInitializeStartMin) {
+                initializeGameStartMin();
+                return;
+            }
+        }
+        if (!isInitializeStartMin && !isInitializeStartMax && gameStatus.equals(AniCloudBedWarsGameStatus.WAIT_PLAYERS)) {
+
+        }
+    }
+
+    public OperationResult giveWaitStartGameItems(Player p) {
+        try {
+            /**
+             * GIVE ITEM TO PLAYER (CHOOSE COMMAND AND ABILITIES
+             */
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return OperationResult.PERFORMANCE_ERROR;
+        }
+        return OperationResult.UNSUCCESSFUL;
     }
 
     @Override
-    public Boolean quitGame(Player player) {
+    public OperationResult quitGame(Player player) {
         /**
          * handle player join
          */
         if (player == null) {
             AniCloudBedWars.inst().error("Player not identified.");
-            return false;
+            return OperationResult.UNSUCCESSFUL;
         }
         if (allPlayersInGame.contains(player)) {
             allPlayersAmount = allPlayersAmount - 1;
             allPlayersInGame.remove(player);
             // send msg for quit
-            return true;
+            return OperationResult.SUCCESSFULLY;
         }
         AniCloudBedWars.inst().error("Player " + player.getName() + " is not in the game.");
-        return false;
+        return OperationResult.PERFORMANCE_ERROR;
     }
 
     @Override
@@ -299,11 +350,11 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
             AniCloudBedWars.inst().error("Player not identified.");
             return false;
         }
-        Boolean isQuit = quitGame(player);
-        if (isQuit)
+        OperationResult isQuit = quitGame(player);
+        if (isQuit.equals(OperationResult.SUCCESSFULLY))
             player.kickPlayer("К сожалению Вам не разрешено играть дальше.\n"
                     + cause);
-        return isQuit;
+        return true;
     }
 
     @Override
@@ -315,7 +366,7 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
         /**
          * QUIT WITHOUT KICK.
          */
-        if (quitGame(player)) {
+        if (quitGame(player).equals(OperationResult.SUCCESSFULLY)) {
             player.setGameMode(GameMode.SPECTATOR);
             player.setFlying(true);
             player.setPlayerListName("AniCloudNPC");
@@ -418,6 +469,10 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
         return this;
     }
 
+    public static void setMinPlayers(Integer minPlayers) {
+        AniCloudBedWarsGame.minPlayers = minPlayers;
+    }
+
     public AniCloudBedWarsGame setSurvivingPlayersAmount(Integer survivingPlayersAmount) {
         this.survivingPlayersAmount = survivingPlayersAmount;
         return this;
@@ -518,19 +573,89 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
      */
 
     public void initializeGameStartMin() {
-
+        isInitializeStartMin = true;
+        setGameStatus(AniCloudBedWarsGameStatus.STARTING_WAIT_PLAYERS);
+        startTimeToStartTicker();
     }
 
     public void initializeGameStartMax() {
-
+        isInitializeStartMax = true;
+        setGameStatus(AniCloudBedWarsGameStatus.STARTING);
+        if (timeToStartGame > timeToStartGameMax)
+            timeToStartGame = timeToStartGameMax;
     }
 
     public void initializeDeathMatchStart() {
-
+        isInitializeDeathMatchStart = true;
     }
 
     public void initializeEndGame() {
+        isInitializeEndGame = true;
+    }
 
+    public void onGameStart() {
+        startMainTimeTicker();
+        /**
+         * send msg to all
+         */
+    }
+
+
+    /**
+     * TIMERS
+     */
+
+    public void startMainBossBarUpdater() {
+        /**
+         * BossBar Updater
+         */
+
+    }
+
+    public void startMainTimeTicker() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (timeToEndGame <= 0) {
+                    initializeEndGame();
+                    this.cancel();
+                }
+                if (timeToEndGame - timeToDeathMatch <= 0) {
+                    initializeDeathMatchStart();
+                }
+                timeToEndGame--;
+            }
+        }.runTaskTimer(getAniCloudBedWars(), 20, 20);
+    }
+
+    public void startTimeToStartTicker() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (allPlayersAmount < minPlayers) {
+                    timeToStartGame = timeToStartGameMin;
+                    isInitializeStartMin = false;
+                    isInitializeStartMax = false;
+                    setGameStatus(AniCloudBedWarsGameStatus.WAIT_PLAYERS);
+                    String msg = GameMessageModule.getGameStartingCancelMessage();
+                    allPlayersInGame.forEach(p -> p.sendMessage(msg));
+                    this.cancel();
+                }
+                if (timeToStartGame <= 0) {
+                    onGameStart();
+                    this.cancel();
+                }
+                if (timeToStartGame < 30) {
+                    String msg = GameMessageModule.getGameStartingMessage(timeToStartGame);
+                    allPlayersInGame.forEach(p -> p.sendMessage(msg));
+                }
+                if (timeToStartGame < 10) {
+                    //String title = GameMessageModule.getGameStartingMessage(timeToStartGame);
+                    allPlayersInGame.forEach(p -> p.sendTitle("§eИгра начнёться через", "§a" + timeToStartGame));
+                }
+                timeToStartGame--;
+            }
+        }.runTaskTimer(getAniCloudBedWars(), 20, 20);
     }
 
 }

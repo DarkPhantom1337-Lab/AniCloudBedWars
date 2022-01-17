@@ -11,7 +11,7 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
     private static ConfigurationsModule configurationsModule;
     private GlobalConfigurationFile globalConfigurationFile;
     private HubConfigurationFile hubConfigurationFile;
-    //private GameConfigurationFile gameConfigurationFile;
+    private GlobalGameConfigurationFile globalGameConfigurationFile;
 
     public ConfigurationsModule(AniCloudBedWars aniCloudBedWars){
         this.aniCloudBedWars = aniCloudBedWars;
@@ -35,35 +35,38 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
         return hubConfigurationFile;
     }
 
-  /*  public GameConfigurationFile getGameConfigurationFile() {
-        return gameConfigurationFile;
+    public GlobalGameConfigurationFile getGlobalGameConfigurationFile() {
+        return globalGameConfigurationFile;
     }
-*/
+
 
     @Override
     public void onLoad() {
         getAniCloudBedWars().info("Loading '" + getModuleName() + "' module...");
         this.globalConfigurationFile = new GlobalConfigurationFile(getAniCloudBedWars());
-        this.hubConfigurationFile = new HubConfigurationFile(getAniCloudBedWars());
-        //this.gameConfigurationFile = new GameConfigurationFile(getAniCloudBedWars());
+        AniCloudBedWars.inst().setWorkType(globalConfigurationFile.getWorkType());
+        if (AniCloudBedWars.inst().getWorkType().equals(WorkType.HUB)) {
+            this.hubConfigurationFile = new HubConfigurationFile(getAniCloudBedWars());
+        }
+        if (AniCloudBedWars.inst().getWorkType().equals(WorkType.GAME)) {
+            this.globalGameConfigurationFile = new GlobalGameConfigurationFile(getAniCloudBedWars());
+        }
         getAniCloudBedWars().info("Successfully loaded '" + getModuleName() +"' module.");
     }
 
     @Override
     public void onEnable() {
         getAniCloudBedWars().info("Enabling '" + getModuleName() + "' module...");
-        if (globalConfigurationFile.getWorkType().equals(WorkType.HUB)){
+       /* if (globalConfigurationFile.getWorkType().equals(WorkType.HUB)){
             getAniCloudBedWars().info("Initializing variables for WorkType 'HUB'...");
-            getAniCloudBedWars().setHubPrefix(getHubConfigurationFile().getHubPrefix());
             /**
              * initialize all hub variables
-             */
+
 
         }
         if (globalConfigurationFile.getWorkType().equals(WorkType.GAME)){
             getAniCloudBedWars().info("Initializing variables for WorkType 'GAME'...");
-        //    getAniCloudBedWars().setInGamePrefix(getGameConfigurationFile().getGamePrefix());
-        }
+        }*/
     }
 
     @Override

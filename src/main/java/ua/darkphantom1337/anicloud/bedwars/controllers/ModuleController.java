@@ -34,6 +34,7 @@ public class ModuleController {
         getAniCloudBedWars().info("Initializing all modules...");
         allModules.put("CONFIGURATIONS", new ConfigurationsModule(getAniCloudBedWars()));
         allModules.put("HubMessage", new HubMessageModule(getAniCloudBedWars()));
+        allModules.put("GameMessage", new HubMessageModule(getAniCloudBedWars()));
         /**
          * other modules
          */

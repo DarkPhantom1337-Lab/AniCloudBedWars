@@ -22,7 +22,6 @@ public class AniCloudBedWarsPlayer {
     }
 
     public Boolean joinToHub(){
-        new AniCloudBedWarsSessionID();
         return true;
     }
 

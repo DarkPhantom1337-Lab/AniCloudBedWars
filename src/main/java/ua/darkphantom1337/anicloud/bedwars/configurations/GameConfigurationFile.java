@@ -19,6 +19,7 @@ public class GameConfigurationFile extends DarkYAMLFileAPI {
         setString("WorldName", "world");
         setInt("TeamAmount", 16);
         setInt("TeamSize", 16);
+        setInt("MinPlayers", 4);
         setInt("MaxInGameTime", 60 * 60);
         setInt("DeathMatchFloorY", 0);
         setInt("DeathMatchCeilingY", 255);

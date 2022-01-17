@@ -8,8 +8,8 @@ public class HubMessageModule implements AniCloudBedWarsModule {
     private AniCloudBedWars aniCloudBedWars;
 
     private static HubMessageModule hubMessageModule;
-    private String hubJoinMessage = "";
-    private String hubJoinErrorMessage = "";
+    private String hubJoinMessage;
+    private String hubJoinErrorMessage;
 
     @Override
     public String getModuleName() {
