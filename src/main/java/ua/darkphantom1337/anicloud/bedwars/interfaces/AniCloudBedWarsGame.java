@@ -47,9 +47,14 @@ public interface AniCloudBedWarsGame {
 
     List<AniCloudBedWarsResource> getAvailableResources();
 
+    List<AniCloudBedWarsTeamColor> getAvailableTeamColors();
+
     HashMap<AniCloudBedWarsTeamColor, HashMap<AniCloudBedWarsResource, Location>> getAllTeamResourcesLoc();
 
     HashMap<AniCloudBedWarsResource, Location> getTeamResourcesLoc(AniCloudBedWarsTeamColor team);
+
+    HashMap<AniCloudBedWarsTeamColor, Location> getTeamSpawnLoc(AniCloudBedWarsTeamColor team);
+
 
     Location getWaitStartRoomLoc();
 

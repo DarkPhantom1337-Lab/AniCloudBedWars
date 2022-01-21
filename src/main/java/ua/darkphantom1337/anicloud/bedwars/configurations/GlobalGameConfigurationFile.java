@@ -2,6 +2,7 @@ package ua.darkphantom1337.anicloud.bedwars.configurations;
 
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
+import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsTeamColor;
 
 public class GlobalGameConfigurationFile extends DarkYAMLFileAPI {
 
@@ -13,6 +14,9 @@ public class GlobalGameConfigurationFile extends DarkYAMLFileAPI {
     public void firstFill() {
         getFileConfiguration().set(getPlugin().getName(), "Filename: " + getFileName() + " || Author: DarkPhantom1337");
         setString("GamePrefix", "[§a§lAniCloudBedWars-GAME]");
+        for (AniCloudBedWarsTeamColor teamColor : AniCloudBedWarsTeamColor.values()){
+            setString("Team." + teamColor.name() + ".Name", teamColor.name().toLowerCase() + "Team");
+        }
         setString("GameJoinMessage", "%gamePrefix% -> Игрок %gameJoinPlayer% зашёл в игру." +
                 " Для старта игры нужно ещё %gameNeedToStartPlayer%");
         setString("GamePlayerJoinMessage", "%gamePrefix% -> Вы зашли в игру." +

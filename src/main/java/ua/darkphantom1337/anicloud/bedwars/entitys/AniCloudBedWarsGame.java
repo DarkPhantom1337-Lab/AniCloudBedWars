@@ -28,8 +28,18 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
     static AniCloudBedWarsGameStatus gameStatus = AniCloudBedWarsGameStatus.DISABLED;
     static List<String> buildersNames;
     static List<AniCloudBedWarsResource> availableResources;
+    static List<AniCloudBedWarsTeamColor> availableTeamColors;
     static List<Player> allPlayersInGame, survivingPlayersInGame;
     static Boolean isInitializeStartMin, isInitializeStartMax, isInitializeDeathMatchStart, isInitializeEndGame;
+
+    static HashMap<AniCloudBedWarsResource, ACBWTeamResourceSpawnLocation> resourceSpawnLocations;
+    static HashMap<AniCloudBedWarsTeamColor, Location> teamSpawnLocations;
+    static HashMap<AniCloudBedWarsTeamColor, Location> sellerSpawnLocations;
+    static HashMap<AniCloudBedWarsTeamColor, Location> upgradeSpawnLocations;
+    static HashMap<AniCloudBedWarsTeamColor, ACBWBedSpawnLocation> bedSpawnLocations;
+
+    static ACBWShop inGameShop;
+    static ACBWUpgradeShop inGameUpgradeShop;
 
     public AniCloudBedWarsGame(String gameID) {
         if (!AniCloudBedWars.inst().getWorkType().equals(WorkType.GAME)) {
@@ -188,12 +198,22 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
     }
 
     @Override
+    public List<AniCloudBedWarsTeamColor> getAvailableTeamColors() {
+        return availableTeamColors;
+    }
+
+    @Override
     public HashMap<AniCloudBedWarsTeamColor, HashMap<AniCloudBedWarsResource, Location>> getAllTeamResourcesLoc() {
         return null;
     }
 
     @Override
     public HashMap<AniCloudBedWarsResource, Location> getTeamResourcesLoc(AniCloudBedWarsTeamColor team) {
+        return null;
+    }
+
+    @Override
+    public HashMap<AniCloudBedWarsTeamColor, Location> getTeamSpawnLoc(AniCloudBedWarsTeamColor team) {
         return null;
     }
 

@@ -31,6 +31,8 @@ public class GameConfigurationFile extends DarkYAMLFileAPI {
         setString("ArenaCenter", "world;-1337;66;+1337");
         setStringList("BuildersNames", new ArrayList<String>());
         setStringList("AvailableResources", new ArrayList<String>());
+        setString("ShopID", "default");
+        setString("UpgradeShopID", "default");
         saveFileConfiguration();
     }
 

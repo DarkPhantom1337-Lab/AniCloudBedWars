@@ -7,5 +7,6 @@
     <file url="file://$PROJECT_DIR$/src/main/java/ua/darkphantom1337/anicloud/bedwars/configurations/GlobalConfigurationFile.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/java/ua/darkphantom1337/anicloud/bedwars/configurations/GlobalGameConfigurationFile.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/ua/darkphantom1337/anicloud/bedwars/configurations/HubConfigurationFile.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/ua/darkphantom1337/anicloud/bedwars/configurations/ShopFile.java" charset="windows-1251" />
   </component>
 </project>
