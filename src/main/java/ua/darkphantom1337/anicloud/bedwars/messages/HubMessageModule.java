@@ -1,6 +1,7 @@
 package ua.darkphantom1337.anicloud.bedwars.messages;
 
 import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
+import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
 import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsModule;
 
 public class HubMessageModule implements AniCloudBedWarsModule {
@@ -32,8 +33,10 @@ public class HubMessageModule implements AniCloudBedWarsModule {
 
     @Override
     public void onLoad() {
-        hubJoinMessage  = getAniCloudBedWars().getConfigurationsModule().getHubConfigurationFile().getString("HubJoinMessage");
-        hubJoinErrorMessage  = getAniCloudBedWars().getConfigurationsModule().getHubConfigurationFile().getString("HubJoinErrorMessage");
+        if (AniCloudBedWars.getInstance().getWorkType().equals(WorkType.HUB)) {
+            hubJoinMessage = getAniCloudBedWars().getConfigurationsModule().getHubConfigurationFile().getString("HubJoinMessage");
+            hubJoinErrorMessage = getAniCloudBedWars().getConfigurationsModule().getHubConfigurationFile().getString("HubJoinErrorMessage");
+        }
     }
 
     @Override
@@ -53,15 +56,16 @@ public class HubMessageModule implements AniCloudBedWarsModule {
 
     public HubMessageModule(AniCloudBedWars aniCloudBedWars) {
         this.aniCloudBedWars = aniCloudBedWars;
-        getAniCloudBedWars().info("Loading 'HubMessage' module...");
+        getAniCloudBedWars().info("Initializing 'HubMessage' module...");
         hubMessageModule = this;
+        getAniCloudBedWars().info("Successfully initialized 'HubMessage' module...");
     }
 
-    public static String getHubJoinMessage(){
+    public static String getHubJoinMessage() {
         return hubMessageModule.hubJoinMessage;
     }
 
-    public static String getHubJoinErrorMessage(){
+    public static String getHubJoinErrorMessage() {
         return hubMessageModule.hubJoinErrorMessage;
     }
 }

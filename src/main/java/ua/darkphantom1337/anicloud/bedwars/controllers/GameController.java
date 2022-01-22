@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
+import ua.darkphantom1337.anicloud.bedwars.configurations.GameConfigurationFile;
 import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsGame;
 import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsPlayer;
 import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsSessionID;
@@ -24,6 +25,7 @@ public class GameController implements Listener {
     private HashMap<String, AniCloudBedWarsModule> availableGames = new HashMap<>();
     private Boolean isEnabled = false;
     private AniCloudBedWarsGame currentBedWarsGame;
+    private static HashMap<String, GameConfigurationFile> gameConfigurationFileHashMap = new HashMap<>();
 
     public GameController(AniCloudBedWars aniCloudBedWars) {
         try {
@@ -114,4 +116,9 @@ public class GameController implements Listener {
         }
     }
 
+    public GameConfigurationFile getGameConfigurationFile(String gameID) {
+        if (gameConfigurationFileHashMap.containsKey(gameID))
+            return gameConfigurationFileHashMap.get(gameID);
+        return new GameConfigurationFile(aniCloudBedWars, gameID);
+    }
 }

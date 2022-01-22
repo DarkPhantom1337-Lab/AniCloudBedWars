@@ -19,12 +19,7 @@ public enum AniCloudBedWarsTeamColor {
     DARK_BLUE,
     DARK_RED,
     DARK_TURQUOISE,
-    DARK_GRAY,
-    RAINBOW,
-    PHANTOM,
-    MAGIC,
-    DARK,
-    DARK_PHANTOM;
+    DARK_GRAY;
 
     public String getTeamName(){
         return AniCloudBedWars.getInstance().getConfigurationsModule().getGlobalGameConfigurationFile().getSValue("Team." + this.name() + ".Name");

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AniCloudBedWars_v.1.0.0_BETA">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="AniCloudBedWars_v.1.0.0_BETA.jar">
+      <element id="module-output" name="AniCloudBedWars" />
+    </root>
+  </artifact>
+</component>

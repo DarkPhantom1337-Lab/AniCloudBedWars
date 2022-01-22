@@ -15,10 +15,10 @@ public class GlobalConfigurationFile extends DarkYAMLFileAPI {
     @Override
     public void firstFill() {
         getFileConfiguration().set(getPlugin().getName(), "Filename: " + getFileName() + " || Author: DarkPhantom1337");
-        setString("ServerName", "PHANTOM-HUB");
-        setString("WorkType", WorkType.HUB.name());
+        setString("ServerName", "NOT-CONFIGURED-BEDWARS");
+        setString("WorkType", WorkType.UNSPECIFIED.name());
         setStringList("GamesID", new ArrayList<String>());
-        setString("InGamePrefix", "§a§lAniCloudBedWars");
+        setString("PluginPrefix", "§a§lAniCloudBedWars");
 
         saveFileConfiguration();
     }
@@ -27,8 +27,8 @@ public class GlobalConfigurationFile extends DarkYAMLFileAPI {
         return WorkType.valueOf(getString("WorkType"));
     }
 
-    public String getInGamePrefix() {
-        return getString("InGamePrefix");
+    public String getPluginPrefix() {
+        return getString("PluginPrefix");
     }
 
     public List<String> getGamesID() {

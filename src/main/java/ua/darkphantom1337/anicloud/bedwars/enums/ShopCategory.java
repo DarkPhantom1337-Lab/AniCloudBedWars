@@ -1,6 +1,6 @@
 package ua.darkphantom1337.anicloud.bedwars.enums;
 
-import javafx.scene.paint.Material;
+import org.bukkit.Material;
 import ua.darkphantom1337.anicloud.bedwars.entitys.ACBWItem;
 
 import java.util.List;

@@ -4,6 +4,7 @@ import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
 import ua.darkphantom1337.anicloud.bedwars.configurations.ConfigurationsModule;
 import ua.darkphantom1337.anicloud.bedwars.enums.ModuleNames;
 import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsModule;
+import ua.darkphantom1337.anicloud.bedwars.messages.GameMessageModule;
 import ua.darkphantom1337.anicloud.bedwars.messages.HubMessageModule;
 
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class ModuleController {
         getAniCloudBedWars().info("Initializing all modules...");
         allModules.put("CONFIGURATIONS", new ConfigurationsModule(getAniCloudBedWars()));
         allModules.put("HubMessage", new HubMessageModule(getAniCloudBedWars()));
-        allModules.put("GameMessage", new HubMessageModule(getAniCloudBedWars()));
+        allModules.put("GameMessage", new GameMessageModule());
         /**
          * other modules
          */

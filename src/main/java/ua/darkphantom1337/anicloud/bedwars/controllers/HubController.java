@@ -18,12 +18,18 @@ public class HubController implements Listener {
     private AniCloudBedWars aniCloudBedWars;
     private static HubController hubController;
     private HashMap<String, AniCloudBedWarsModule> availableGames = new HashMap<>();
+    private static Boolean isEnabled = false;
 
     public HubController(AniCloudBedWars aniCloudBedWars) {
-        this.aniCloudBedWars = aniCloudBedWars;
-        getAniCloudBedWars().info("Loading 'HubController' ...");
-        hubController = this;
-        initializeHub();
+        try {
+            this.aniCloudBedWars = aniCloudBedWars;
+            getAniCloudBedWars().info("Loading 'HubController' ...");
+            hubController = this;
+            initializeHub();
+            isEnabled = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void enableHubController() {
@@ -36,6 +42,10 @@ public class HubController implements Listener {
 
     public static HubController getHubController() {
         return hubController;
+    }
+
+    public Boolean isEnabled() {
+        return isEnabled;
     }
 
     public HashMap<String, AniCloudBedWarsModule> getAvailableGames() {

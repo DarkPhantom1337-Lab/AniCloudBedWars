@@ -1,19 +1,23 @@
 package ua.darkphantom1337.anicloud.bedwars;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import ua.darkphantom1337.anicloud.bedwars.commands.ACBWCommand;
 import ua.darkphantom1337.anicloud.bedwars.configurations.ConfigurationsModule;
 import ua.darkphantom1337.anicloud.bedwars.configurations.GameConfigurationFile;
+import ua.darkphantom1337.anicloud.bedwars.controllers.BasicController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.GameController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.HubController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.ModuleController;
-import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsSessionID;
+import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsGame;
+import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsGameStatus;
 import ua.darkphantom1337.anicloud.bedwars.enums.ModuleNames;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkStatus;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
-import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsGame;
 import ua.darkphantom1337.anicloud.bedwars.messages.HubMessageModule;
 
 import java.util.List;
+import java.util.Random;
 
 public class AniCloudBedWars extends JavaPlugin {
 
@@ -32,8 +36,9 @@ public class AniCloudBedWars extends JavaPlugin {
      */
 
     private ModuleController moduleController;
-    private HubController hubController;
+    private BasicController basicController;
     private GameController gameController;
+    private HubController hubController;
 
     /**
      * MODULES
@@ -54,6 +59,10 @@ public class AniCloudBedWars extends JavaPlugin {
         return moduleController;
     }
 
+    public BasicController getBasicController() {
+        return basicController;
+    }
+
     public HubController getHubController() {
         return hubController;
     }
@@ -66,6 +75,11 @@ public class AniCloudBedWars extends JavaPlugin {
         return configurationsModule;
     }
 
+    public AniCloudBedWars setConfigurationsModule(ConfigurationsModule configurationsModule) {
+        this.configurationsModule = configurationsModule;
+        return this;
+    }
+
     public void onLoad() {
         info("Initializing AniCloudBedWars plugin, please wait. by DarkPhantom1337, 2022.");
         setWorkStatus(WorkStatus.LOADING);
@@ -73,32 +87,80 @@ public class AniCloudBedWars extends JavaPlugin {
         moduleController = new ModuleController(this);
         info("Loading AniCloudBedWars plugin, please wait. by DarkPhantom1337, 2022.");
         getModuleController().loadAllModules();
-        configurationsModule = (ConfigurationsModule) getModuleController().getModule(ModuleNames.CONFIGURATION);
-        hubMessageModule = (HubMessageModule) getModuleController().getModule(ModuleNames.HubMessage);
-
     }
 
     public void onEnable() {
         info("Enabling AniCloudBedWars plugin, please wait. by DarkPhantom1337, 2022.");
         setWorkStatus(WorkStatus.ENABLING);
         getModuleController().enableAllModules();
-        if (workType.equals(WorkType.HUB)){
+        getCommand("acbw").setExecutor(new ACBWCommand());
+        if (workType.equals(WorkType.HUB)) {
             info("Plugin work type: HUB. Creating and configuring games on this server is not possible.");
             hubController = new HubController(inst());
-        }
-        if (workType.equals(WorkType.GAME)){
-            info("Plugin work type: GAME. It is not possible to create and configure a hub on this server.");
-            gameController = new GameController(inst());
-            if (getGameController().isEnabled()){
-                info("GameController successfully enabled.");
+            getHubController().enableHubController();
+            if (getHubController().isEnabled()) {
+                info("HubController successfully enabled.");
+
             } else {
-                error("GameController not enabled. Error printed...");
+                error("HubController not enabled. Error printed...");
+                this.setEnabled(false);
+            }
+            return;
+        }
+        if (workType.equals(WorkType.GAME)) {
+            info("Plugin work type: GAME. It is not possible to create and configure a hub on this server.");
+            if (getGamesID().size() <= 0) {
+                error("There are no customized games. Please setup game... WorkType set to UNSPECIFIED...");
+                workType = WorkType.UNSPECIFIED;
+            } else {
+                gameController = new GameController(inst());
+                if (getGameController().isEnabled()) {
+                    info("GameController successfully enabled.");
+                    startAutoGameStarter();
+                } else {
+                    error("GameController not enabled. Error printed...");
+                    this.setEnabled(false);
+                }
+                return;
             }
         }
-        if (workType.equals(WorkType.UNSPECIFIED)){
+        if (workType.equals(WorkType.UNSPECIFIED)) {
             error("Plugin work type: UNSPECIFIED. /acbw global changeworktype <TYPE> to change. " +
                     "\nAvailable types: HUB, GAME.");
+            basicController = new BasicController(this);
+            basicController.enableBasicController();
+            if (getBasicController().isEnabled()) {
+                info("BasicController successfully enabled.");
+            } else {
+                error("BasicController not enabled. Error printed...");
+            }
+            return;
         }
+    }
+
+    public void startAutoGameStarter() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                info("[AutoGameStarter] -> I'm looking for game sessions ...");
+                if (getGamesID().size() <= 0) {
+                    error("[AutoGameStarter] -> There are no customized games. Please setup game...");
+                    return;
+                }
+                AniCloudBedWarsGame currentGame = getGameController().getCurrentBedWarsGame();
+                if (currentGame == null || currentGame.getGameStatus().equals(AniCloudBedWarsGameStatus.DISABLED)) {
+                    info("[AutoGameStarter] -> Game not running or disabled... I'm launching a new game, please wait.");
+                    getGameController()
+                            .startAniCloudBedWarsGame(getGamesID()
+                                    .get(new Random()
+                                            .nextInt(getGamesID().size() - 1)));
+                } else {
+                    info("[AutoGameStarter] -> The game is already running ...");
+                }
+            }
+        }.runTaskTimer(this,
+                20 * 60, 20 * 60 * 5
+        );
     }
 
     public void onDisable() {
@@ -108,11 +170,11 @@ public class AniCloudBedWars extends JavaPlugin {
     }
 
     public void info(String message) {
-        System.out.println(this.consolePrefix + " §a[INFO] " + message);
+        getLogger().info(this.consolePrefix + " §a[INFO] " + message);
     }
 
     public void error(String message) {
-        System.out.println(this.consolePrefix + " §4[ERROR] " + message);
+        getLogger().fine(this.consolePrefix + " §4[ERROR] " + message);
     }
 
 

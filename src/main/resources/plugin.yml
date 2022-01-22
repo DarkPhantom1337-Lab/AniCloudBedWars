@@ -1,0 +1,8 @@
+name: AniCloudBedWars
+version: 1.0.0_BETA
+author: DarkPhantom1337
+description: AniCloudBedWars plugin for version 1.16.x
+main: ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars
+api-version: 1.13
+commands:
+  acbw:

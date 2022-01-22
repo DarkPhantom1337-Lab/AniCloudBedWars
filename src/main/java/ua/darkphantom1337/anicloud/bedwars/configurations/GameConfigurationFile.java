@@ -2,8 +2,12 @@ package ua.darkphantom1337.anicloud.bedwars.configurations;
 
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
+import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsResource;
+import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsTeamColor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class GameConfigurationFile extends DarkYAMLFileAPI {
 
@@ -30,7 +34,8 @@ public class GameConfigurationFile extends DarkYAMLFileAPI {
         setString("ArenaWaitSpawnLoc", "world;-1337;66;+1337");
         setString("ArenaCenter", "world;-1337;66;+1337");
         setStringList("BuildersNames", new ArrayList<String>());
-        setStringList("AvailableResources", new ArrayList<String>());
+        setStringList("AvailableResources", Arrays.stream(AniCloudBedWarsResource.values()).map(res -> res.name()).collect(Collectors.toList()));
+        setStringList("AvailableTeamColors", Arrays.stream(AniCloudBedWarsTeamColor.values()).map(res -> res.name()).collect(Collectors.toList()));
         setString("ShopID", "default");
         setString("UpgradeShopID", "default");
         saveFileConfiguration();
@@ -40,15 +45,15 @@ public class GameConfigurationFile extends DarkYAMLFileAPI {
         return getString("GamePrefix");
     }
 
-    public String getGameSValue(String valueID){
+    public String getGameSValue(String valueID) {
         return getString(valueID);
     }
 
-    public Integer getGameIValue(String valueID){
+    public Integer getGameIValue(String valueID) {
         return getInt(valueID);
     }
 
-    public Location getGameLValue(String valueID){
+    public Location getGameLValue(String valueID) {
         return getFileConfiguration().getLocation(valueID);
     }
 

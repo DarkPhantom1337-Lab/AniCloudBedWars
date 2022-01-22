@@ -1,6 +1,7 @@
 package ua.darkphantom1337.anicloud.bedwars.configurations;
 
 import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
+import ua.darkphantom1337.anicloud.bedwars.enums.ModuleNames;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
 import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsModule;
 
@@ -16,6 +17,7 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
     public ConfigurationsModule(AniCloudBedWars aniCloudBedWars){
         this.aniCloudBedWars = aniCloudBedWars;
         configurationsModule = this;
+        AniCloudBedWars.inst().setConfigurationsModule(configurationsModule);
         getAniCloudBedWars().info("Successfully initialized 'CONFIGURATIONS' module.");
     }
 
@@ -57,16 +59,6 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
     @Override
     public void onEnable() {
         getAniCloudBedWars().info("Enabling '" + getModuleName() + "' module...");
-       /* if (globalConfigurationFile.getWorkType().equals(WorkType.HUB)){
-            getAniCloudBedWars().info("Initializing variables for WorkType 'HUB'...");
-            /**
-             * initialize all hub variables
-
-
-        }
-        if (globalConfigurationFile.getWorkType().equals(WorkType.GAME)){
-            getAniCloudBedWars().info("Initializing variables for WorkType 'GAME'...");
-        }*/
     }
 
     @Override

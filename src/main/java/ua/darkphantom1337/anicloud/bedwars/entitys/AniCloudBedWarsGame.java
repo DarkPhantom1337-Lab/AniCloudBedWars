@@ -38,6 +38,10 @@ public class AniCloudBedWarsGame implements ua.darkphantom1337.anicloud.bedwars.
     static HashMap<AniCloudBedWarsTeamColor, Location> upgradeSpawnLocations;
     static HashMap<AniCloudBedWarsTeamColor, ACBWBedSpawnLocation> bedSpawnLocations;
 
+    /**
+     * spawn resources delays
+     */
+
     static ACBWShop inGameShop;
     static ACBWUpgradeShop inGameUpgradeShop;
 

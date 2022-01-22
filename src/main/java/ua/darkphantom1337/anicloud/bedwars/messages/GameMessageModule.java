@@ -1,6 +1,7 @@
 package ua.darkphantom1337.anicloud.bedwars.messages;
 
 import ua.darkphantom1337.anicloud.bedwars.AniCloudBedWars;
+import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
 import ua.darkphantom1337.anicloud.bedwars.interfaces.AniCloudBedWarsModule;
 
 public class GameMessageModule implements AniCloudBedWarsModule {
@@ -35,20 +36,21 @@ public class GameMessageModule implements AniCloudBedWarsModule {
 
     @Override
     public void onLoad() {
-        this.aniCloudBedWars = AniCloudBedWars.inst();
-        getAniCloudBedWars().info("Loading '" + getModuleName() + "' module...");
-
-        gameMessageModule = this;
-        gamePrefix = getAniCloudBedWars().getConfigurationsModule()
-                .getGlobalGameConfigurationFile().getString("GamePrefix");
-        gameJoinMessage = getAniCloudBedWars().getConfigurationsModule()
-                .getGlobalGameConfigurationFile().getString("GameJoinMessage");
-        gamePlayerJoinMessage = getAniCloudBedWars().getConfigurationsModule()
-                .getGlobalGameConfigurationFile().getString("GamePlayerJoinMessage");
-        gameStarting = getAniCloudBedWars().getConfigurationsModule()
-                .getGlobalGameConfigurationFile().getString("GameStarting");
-        gameStartingCancel = getAniCloudBedWars().getConfigurationsModule()
-                .getGlobalGameConfigurationFile().getString("GameStartingCancel");
+        if (AniCloudBedWars.getInstance().getWorkType().equals(WorkType.GAME)) {
+            this.aniCloudBedWars = AniCloudBedWars.inst();
+            getAniCloudBedWars().info("Loading '" + getModuleName() + "' module...");
+            gameMessageModule = this;
+            gamePrefix = getAniCloudBedWars().getConfigurationsModule()
+                    .getGlobalGameConfigurationFile().getString("GamePrefix");
+            gameJoinMessage = getAniCloudBedWars().getConfigurationsModule()
+                    .getGlobalGameConfigurationFile().getString("GameJoinMessage");
+            gamePlayerJoinMessage = getAniCloudBedWars().getConfigurationsModule()
+                    .getGlobalGameConfigurationFile().getString("GamePlayerJoinMessage");
+            gameStarting = getAniCloudBedWars().getConfigurationsModule()
+                    .getGlobalGameConfigurationFile().getString("GameStarting");
+            gameStartingCancel = getAniCloudBedWars().getConfigurationsModule()
+                    .getGlobalGameConfigurationFile().getString("GameStartingCancel");
+        }
     }
 
     @Override
@@ -103,7 +105,7 @@ public class GameMessageModule implements AniCloudBedWarsModule {
         return tempJoinMessage;
     }
 
-    private static String replaceColors(String message){
+    private static String replaceColors(String message) {
         if (message.contains("&"))
             message = message.replace("&", "§");
         return message;
