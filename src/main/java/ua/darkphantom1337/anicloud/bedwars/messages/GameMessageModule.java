@@ -36,26 +36,27 @@ public class GameMessageModule implements AniCloudBedWarsModule {
 
     @Override
     public void onLoad() {
+        this.aniCloudBedWars = AniCloudBedWars.inst();
+        getAniCloudBedWars().info("Loading '" + getModuleName() + "' module...");
+        gameMessageModule = this;
+
+    }
+
+    @Override
+    public void onEnable() {
         if (AniCloudBedWars.getInstance().getWorkType().equals(WorkType.GAME)) {
-            this.aniCloudBedWars = AniCloudBedWars.inst();
-            getAniCloudBedWars().info("Loading '" + getModuleName() + "' module...");
-            gameMessageModule = this;
             gamePrefix = getAniCloudBedWars().getConfigurationsModule()
                     .getGlobalGameConfigurationFile().getString("GamePrefix");
             gameJoinMessage = getAniCloudBedWars().getConfigurationsModule()
                     .getGlobalGameConfigurationFile().getString("GameJoinMessage");
             gamePlayerJoinMessage = getAniCloudBedWars().getConfigurationsModule()
                     .getGlobalGameConfigurationFile().getString("GamePlayerJoinMessage");
+            System.out.println(gamePlayerJoinMessage);
             gameStarting = getAniCloudBedWars().getConfigurationsModule()
                     .getGlobalGameConfigurationFile().getString("GameStarting");
             gameStartingCancel = getAniCloudBedWars().getConfigurationsModule()
                     .getGlobalGameConfigurationFile().getString("GameStartingCancel");
         }
-    }
-
-    @Override
-    public void onEnable() {
-
     }
 
     @Override
@@ -82,11 +83,13 @@ public class GameMessageModule implements AniCloudBedWarsModule {
     }
 
     public static String getGamePlayerJoinMessage(String playerName, Integer needToStartPlayer) {
+        System.out.println(gamePlayerJoinMessage);
         String tempJoinMessage = "" + gamePlayerJoinMessage;
         tempJoinMessage = replaceColors(tempJoinMessage);
         tempJoinMessage = replaceGamePrefix(tempJoinMessage);
         tempJoinMessage = replaceGameJoinPlayer(tempJoinMessage, playerName);
         tempJoinMessage = replaceGameNeedToStartPlayer(tempJoinMessage, needToStartPlayer);
+        System.out.println(tempJoinMessage + " te,p");
         return tempJoinMessage;
     }
 

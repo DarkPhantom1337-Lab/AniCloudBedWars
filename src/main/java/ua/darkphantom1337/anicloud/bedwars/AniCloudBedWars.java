@@ -1,5 +1,6 @@
 package ua.darkphantom1337.anicloud.bedwars;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import ua.darkphantom1337.anicloud.bedwars.commands.ACBWCommand;
@@ -11,7 +12,6 @@ import ua.darkphantom1337.anicloud.bedwars.controllers.HubController;
 import ua.darkphantom1337.anicloud.bedwars.controllers.ModuleController;
 import ua.darkphantom1337.anicloud.bedwars.entitys.AniCloudBedWarsGame;
 import ua.darkphantom1337.anicloud.bedwars.enums.AniCloudBedWarsGameStatus;
-import ua.darkphantom1337.anicloud.bedwars.enums.ModuleNames;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkStatus;
 import ua.darkphantom1337.anicloud.bedwars.enums.WorkType;
 import ua.darkphantom1337.anicloud.bedwars.messages.HubMessageModule;
@@ -109,20 +109,31 @@ public class AniCloudBedWars extends JavaPlugin {
         }
         if (workType.equals(WorkType.GAME)) {
             info("Plugin work type: GAME. It is not possible to create and configure a hub on this server.");
-            if (getGamesID().size() <= 0) {
-                error("There are no customized games. Please setup game... WorkType set to UNSPECIFIED...");
-                workType = WorkType.UNSPECIFIED;
+            gameController = new GameController(inst());
+            if (getGameController().isEnabled()) {
+                new ACBWGamePlaceholder().register();
+                info("GameController successfully enabled.");
+                startAutoGameStarter();
             } else {
-                gameController = new GameController(inst());
-                if (getGameController().isEnabled()) {
-                    info("GameController successfully enabled.");
-                    startAutoGameStarter();
-                } else {
-                    error("GameController not enabled. Error printed...");
-                    this.setEnabled(false);
-                }
-                return;
+                error("GameController not enabled. Error printed...");
+                this.setEnabled(false);
             }
+            return;
+
+        }
+        if (workType.equals(WorkType.CREATING)) {
+            info("Plugin work type: CREATING. It is not possible to create and configure a hub on this server.");
+            gameController = new GameController(inst());
+            if (getGameController().isEnabled()) {
+                info("GameController successfully enabled.");
+               /* gameController.getGameConfigurationFile("game1337").setLocation("Test.Loc", Bukkit.getWorlds().get(0).getSpawnLocation());
+                info(gameController.getGameConfigurationFile("game1337").getLocation("Test.Loc").toString());
+            */} else {
+                error("GameController not enabled. Error printed...");
+                this.setEnabled(false);
+            }
+            return;
+
         }
         if (workType.equals(WorkType.UNSPECIFIED)) {
             error("Plugin work type: UNSPECIFIED. /acbw global changeworktype <TYPE> to change. " +
@@ -150,10 +161,16 @@ public class AniCloudBedWars extends JavaPlugin {
                 AniCloudBedWarsGame currentGame = getGameController().getCurrentBedWarsGame();
                 if (currentGame == null || currentGame.getGameStatus().equals(AniCloudBedWarsGameStatus.DISABLED)) {
                     info("[AutoGameStarter] -> Game not running or disabled... I'm launching a new game, please wait.");
-                    getGameController()
-                            .startAniCloudBedWarsGame(getGamesID()
-                                    .get(new Random()
-                                            .nextInt(getGamesID().size() - 1)));
+                    if (getGamesID().size() == 1){
+                        getGameController()
+                                .startAniCloudBedWarsGame(getGamesID()
+                                        .get(0));
+                    } else {
+                        getGameController()
+                                .startAniCloudBedWarsGame(getGamesID()
+                                        .get(new Random()
+                                                .nextInt(getGamesID().size() - 1)));
+                    }
                 } else {
                     info("[AutoGameStarter] -> The game is already running ...");
                 }

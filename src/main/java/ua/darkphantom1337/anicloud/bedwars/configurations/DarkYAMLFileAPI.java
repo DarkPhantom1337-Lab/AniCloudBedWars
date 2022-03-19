@@ -1,5 +1,6 @@
 package ua.darkphantom1337.anicloud.bedwars.configurations;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -271,6 +272,16 @@ public class DarkYAMLFileAPI {
         }
     }
 
+    public final Location getLocation(String path) {
+        if (getFileConfiguration().isSet(path))
+            return getFileConfiguration().getLocation(path);
+        else {
+            System.out.println("[DarkYAMLFileAPI] -> ERROR! PATH '" + path + "' NOT FOUND IN FILE{ " + toString() + " }." +
+                    "+\nMethod: getLocation(String path);");
+            return null;
+        }
+    }
+
     public final Integer getInt(String path) {
         if (getFileConfiguration().isSet(path))
             return getFileConfiguration().getInt(path);
@@ -340,6 +351,11 @@ public class DarkYAMLFileAPI {
         setObject(path, value);
     }
 
+    public final void setItem(String path, ItemStack value) {
+        setObject(path, value);
+    }
+
+
     public final void setInt(String path, Integer value) {
         setObject(path, value);
     }
@@ -349,6 +365,10 @@ public class DarkYAMLFileAPI {
     }
 
     public final void setLong(String path, Long value) {
+        setObject(path, value);
+    }
+
+    public final void setLocation(String path, Location value) {
         setObject(path, value);
     }
 

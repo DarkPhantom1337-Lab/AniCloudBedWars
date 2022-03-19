@@ -35,4 +35,10 @@ public class GlobalConfigurationFile extends DarkYAMLFileAPI {
         return getStringList("GamesID");
     }
 
+    public void addGameID(String gameID) {
+        List<String> gamesID = getGamesID();
+        gamesID.add(gameID);
+        setStringList("GamesID", gamesID);
+    }
+
 }

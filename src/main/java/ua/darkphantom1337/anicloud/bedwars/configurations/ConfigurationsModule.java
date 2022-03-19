@@ -13,6 +13,7 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
     private GlobalConfigurationFile globalConfigurationFile;
     private HubConfigurationFile hubConfigurationFile;
     private GlobalGameConfigurationFile globalGameConfigurationFile;
+    private ItemConfigurationFile itemConfigurationFile;
 
     public ConfigurationsModule(AniCloudBedWars aniCloudBedWars){
         this.aniCloudBedWars = aniCloudBedWars;
@@ -41,6 +42,9 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
         return globalGameConfigurationFile;
     }
 
+    public ItemConfigurationFile getItemConfigurationFile() {
+        return itemConfigurationFile;
+    }
 
     @Override
     public void onLoad() {
@@ -53,6 +57,7 @@ public class ConfigurationsModule implements AniCloudBedWarsModule {
         if (AniCloudBedWars.inst().getWorkType().equals(WorkType.GAME)) {
             this.globalGameConfigurationFile = new GlobalGameConfigurationFile(getAniCloudBedWars());
         }
+        itemConfigurationFile = new ItemConfigurationFile(getAniCloudBedWars());
         getAniCloudBedWars().info("Successfully loaded '" + getModuleName() +"' module.");
     }
 
